@@ -8,7 +8,9 @@
 import scrapy
 
 
-class GasdbItem(scrapy.Item):
-    # define the fields for your item here like:
-    # name = scrapy.Field()
-    pass
+class Gas(scrapy.Item):
+    id = scrapy.Field()
+    name = scrapy.Field()
+    address = scrapy.Field()
+    chargeable = scrapy.Field()
+    phone = scrapy.Field()

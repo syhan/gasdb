@@ -5,18 +5,14 @@ import scrapy
 class SinopecSpider(scrapy.Spider):
     name = 'sinopec'
     allowed_domains = ['www.sinopecsales.com']
-    start_urls = ['http://www.sinopecsales.com/website/gasStationAction_queryGasStationByCondition.action?province=31&stationCharge=2&page.pageNo=1',
-    'http://www.sinopecsales.com/website/gasStationAction_queryGasStationByCondition.action?province=31&stationCharge=2&page.pageNo=2',
-    'http://www.sinopecsales.com/website/gasStationAction_queryGasStationByCondition.action?province=31&stationCharge=2&page.pageNo=3',
-    'http://www.sinopecsales.com/website/gasStationAction_queryGasStationByCondition.action?province=31&stationCharge=2&page.pageNo=4',
-    'http://www.sinopecsales.com/website/gasStationAction_queryGasStationByCondition.action?province=31&stationCharge=2&page.pageNo=5',
-    'http://www.sinopecsales.com/website/gasStationAction_queryGasStationByCondition.action?province=31&stationCharge=2&page.pageNo=6',
-    'http://www.sinopecsales.com/website/gasStationAction_queryGasStationByCondition.action?province=31&stationCharge=2&page.pageNo=7',
-    'http://www.sinopecsales.com/website/gasStationAction_queryGasStationByCondition.action?province=31&stationCharge=2&page.pageNo=8',
-    'http://www.sinopecsales.com/website/gasStationAction_queryGasStationByCondition.action?province=31&stationCharge=2&page.pageNo=9',
-    'http://www.sinopecsales.com/website/gasStationAction_queryGasStationByCondition.action?province=31&stationCharge=2&page.pageNo=10',
-    'http://www.sinopecsales.com/website/gasStationAction_queryGasStationByCondition.action?province=31&stationCharge=2&page.pageNo=11',
-    'http://www.sinopecsales.com/website/gasStationAction_queryGasStationByCondition.action?province=31&stationCharge=2&page.pageNo=12']
+
+    def __init__(self):
+        self.current_page = 1
+        self.query_url = 'http://www.sinopecsales.com/website/gasStationAction_queryGasStationByCondition.action'
+        self.formdata = {'province': '31', 'stationCharge': '2', 'page.pageNo': str(self.current_page)}
+
+    def start_requests(self):
+        yield scrapy.FormRequest(url=self.query_url, formdata=self.formdata, callback=self.parse, dont_filter=True)
 
     def parse(self, response):
         table = response.xpath('//*[@id="form"]/div[2]/div[1]/table/tbody')
@@ -30,6 +26,12 @@ class SinopecSpider(scrapy.Spider):
                 'chargeable': row.xpath('td//text()')[3].get().strip(),
                 'phone': row.xpath('td//text()')[4].get().strip()
             }
-        # TODO: how to follow the link instead of put all pages ahead
+
+        next_page = response.xpath('//*[@id="form"]/div[2]/div[2]/table/tbody/tr/td[3]/a[1]').get()
+        if next_page is not None:
+            self.current_page = self.current_page + 1
+            self.formdata['page.pageNo'] = str(self.current_page)
+
+            yield scrapy.FormRequest(url=self.query_url, formdata=self.formdata, callback=self.parse)
 
 
