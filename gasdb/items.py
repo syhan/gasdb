@@ -18,7 +18,9 @@ class Gas(scrapy.Item):
     chargeable = scrapy.Field()
     phone = scrapy.Field()
     coordinate = scrapy.Field()
+    address_components = scrapy.Field()
 
 class GasLoader(ItemLoader):
     default_output_processor = TakeFirst()
     default_input_processor = MapCompose(lambda x: x.strip())
+    chargeable_in = MapCompose(lambda x: True if x.strip() == '是' else False)
