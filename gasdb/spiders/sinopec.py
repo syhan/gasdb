@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import scrapy
-
+from gasdb.items import Gas, GasLoader
 
 class SinopecSpider(scrapy.Spider):
     name = 'sinopec'
@@ -15,17 +15,18 @@ class SinopecSpider(scrapy.Spider):
         yield scrapy.FormRequest(url=self.query_url, formdata=self.formdata, callback=self.parse, dont_filter=True)
 
     def parse(self, response):
-        table = response.xpath('//*[@id="form"]/div[2]/div[1]/table/tbody')
-        rows = table.xpath('//tr')[2:-1] # remove the header and footer 
+        rows = response.xpath('//tr[@height="35px"]')
 
         for row in rows:
-            yield {
-                'id': row.xpath('td//text()')[0].get().strip(),
-                'name': row.xpath('td//text()')[1].get().strip(),
-                'address': row.xpath('td//text()')[2].get().strip(),
-                'chargeable': row.xpath('td//text()')[3].get().strip(),
-                'phone': row.xpath('td//text()')[4].get().strip()
-            }
+            l = GasLoader(item=Gas(), selector=row)
+
+            l.add_xpath('id', 'td[1]/text()')
+            l.add_xpath('name', 'td[2]/text()')
+            l.add_xpath('address', 'td[3]/text()')
+            l.add_xpath('chargeable', 'td[4]/text()')
+            l.add_xpath('phone',  'td[5]/text()')
+            
+            yield l.load_item()
 
         next_page = response.xpath('//*[@id="form"]/div[2]/div[2]/table/tbody/tr/td[3]/a[1]').get()
         if next_page is not None:
