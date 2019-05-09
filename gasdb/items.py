@@ -17,6 +17,7 @@ class Gas(scrapy.Item):
     address = scrapy.Field()
     chargeable = scrapy.Field()
     phone = scrapy.Field()
+    coordinate = scrapy.Field()
 
 class GasLoader(ItemLoader):
     default_output_processor = TakeFirst()

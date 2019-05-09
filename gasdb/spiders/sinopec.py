@@ -12,6 +12,9 @@ class SinopecSpider(scrapy.Spider):
         self.formdata = {'province': '31', 'stationCharge': '2', 'page.pageNo': str(self.current_page)}
 
     def start_requests(self):
+        #provinces = [11, 91, 12, 13, 41, 14, 15, 21, 22, 23, 31, 32, 33, 34, 35, 36, 37, 42, 43, 44, 45, 46, 50, 51, 52, 53, 54, 61, 62, 63, 64, 65]
+
+        #for p in provinces:
         yield scrapy.FormRequest(url=self.query_url, formdata=self.formdata, callback=self.parse, dont_filter=True)
 
     def parse(self, response):
