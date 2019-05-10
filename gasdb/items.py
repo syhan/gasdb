@@ -18,6 +18,7 @@ class Gas(scrapy.Item):
     chargeable = scrapy.Field()
     phone = scrapy.Field()
     coordinate = scrapy.Field()
+    province = scrapy.Field()
     address_components = scrapy.Field()
 
 class GasLoader(ItemLoader):

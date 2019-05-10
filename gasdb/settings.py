@@ -66,7 +66,8 @@ ROBOTSTXT_OBEY = True
 # See https://doc.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
      'gasdb.pipelines.CoordinatePipeline': 100,
-     'gasdb.pipelines.JsonWritterPipeline': 200
+     'gasdb.pipelines.JsonWritterPipeline': 200,
+     'gasdb.pipelines.MongoPipeline': 300
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
@@ -91,3 +92,9 @@ ITEM_PIPELINES = {
 #HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
 
 FEED_EXPORT_ENCODING = 'utf-8'
+
+# Baidu LBS http://lbsyun.baidu.com/index.php
+BAIDU_AK = 'YkORmXGyF7U2ySjRGLh5lVq3UpycNRIH'
+
+MONGO_URI = 'mongodb://127.0.0.1:27017/'
+MONGO_DATABASE = 'gas'
